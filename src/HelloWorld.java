@@ -1,5 +1,8 @@
 public class HelloWorld {
     public static void main(String[] args) {
-        System.out.println("Hello, World!");
+        String s1 = "Hello";
+        String s2 = "world";
+        String s3 = s1 + ", " + s2 + "!";
+        System.out.println(s3);
     }
 }
