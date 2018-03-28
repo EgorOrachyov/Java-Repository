@@ -68,6 +68,18 @@ public class Vehicle
         return category;
     }
 
+    public String toString()
+    {
+        return getClass().getName() +
+                "[" +
+                "name=" + name +
+                ", model=" + model +
+                ", vendor=" + vendor +
+                ", country=" + country +
+                ", category=" + category +
+                "]";
+    }
+
     private String name;
     private String model;
     private String vendor;

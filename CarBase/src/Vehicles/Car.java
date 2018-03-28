@@ -69,6 +69,17 @@ public class Car extends Vehicle
         return averagePrice;
     }
 
+    public String toString()
+    {
+        return super.toString() +
+                "[" +
+                "max speed=" + maxSpeed +
+                ", power=" + power +
+                ", num of seats=" + numOfSeats +
+                ", average price=" + averagePrice +
+                "]";
+    }
+
     private int maxSpeed;
     private int power;
     private int numOfSeats;
