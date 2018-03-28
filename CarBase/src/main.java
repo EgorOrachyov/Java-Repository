@@ -1,4 +1,4 @@
-import Vehicles.Car;
+import Vehicles.*;
 import java.util.Scanner;
 
 public class main
@@ -11,10 +11,10 @@ public class main
 
         // cars initialization
         {
-            cars[0] = new Car("BMW", "M3", "BMW Group", "Germany", 230, 310, 5, 45000);
-            cars[1] = new Car("Mercedes-Benz", "E-class", "Daimler AG", "Germany", 275, 510, 4, 115000);
-            cars[2] = new Car("Porsche", "Panamera", "Volkswagen Group", "Germany", 320, 525, 4, 150000);
-            cars[3] = new Car("Lexus", "LFA", "Lexus", "Japan", 365, 670, 2, 350000);
+            cars[0] = new BMWm3();
+            cars[1] = new MercedesBenzEclass();
+            cars[2] = new PorschePanamera();
+            cars[3] = new LexusLFA();
         }
 
         System.out.println("*** Cars Data Base ***");
@@ -58,6 +58,7 @@ public class main
                 {
                     System.out.println(s);
                 }
+                System.out.println(cars[carIndex].toString());
             }
 
             System.out.println();
