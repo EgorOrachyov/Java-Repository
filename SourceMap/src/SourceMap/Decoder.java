@@ -18,10 +18,11 @@ public class Decoder {
 
     public static boolean decode(String sourceMapFile) {
 
-        ArrayList<String> sources = new ArrayList<>();
+        ArrayList<FileBuilder> sources = new ArrayList<>();
         ArrayList<String> names = new ArrayList<>();
         String mappings;
         String tmp;
+        Base64 Base64Table = new Base64();
 
         try {
 
@@ -42,7 +43,7 @@ public class Decoder {
                     String line = getCommonInfo(file);
                     String[] sourceNames = getClearSplittedString(line);
                     for(String s: sourceNames) {
-                        sources.add(s);
+                        sources.add(new FileBuilder(s));
                     }
 
                     continue;
@@ -60,11 +61,42 @@ public class Decoder {
 
                 if (tmp.contains("mappings")) {
                     String line = getCommonInfo(file);
-                    String[] encoded = getClearSplittedString(line);
+                    String[] lines = line.split(";");
+                    //String[] encoded = getClearSplittedString(line);
 
-                    // Debug info
-                    for (String s: encoded) {
-                        System.out.println(s);
+                    int output_line = 0;
+                    int output_column = 0;
+                    int input_file = 0;
+                    int input_line = 0;
+                    int input_column = 0;
+                    int input_name = 0;
+
+                    for (String current: lines) {
+                        String[] maps = getClearSplittedString(current);
+
+                        for (String map: maps) {
+                            ArrayList<Integer> indexes = getDecodedIndexesFromBits(Base64Table.getDecodedBits(map));
+
+                            // 0: output_column 1: input_file 2: input_line 3: input_column 4: input_name
+
+                            if (indexes.size() == fiveIndexes) {
+
+                                for (Integer num: indexes) {
+                                    System.out.println(num);
+                                }
+
+                                output_column += indexes.get(0);
+                                input_file += indexes.get(1);
+                                input_line += indexes.get(2);
+                                input_column = (indexes.get(2) == 0 ? input_column + indexes.get(3) : 0);
+                                input_name += indexes.get(4);
+
+                                sources.get(input_file).writeSequences(names.get(input_name), input_line, input_column);
+                            }
+                        }
+
+                        output_line += 1;
+                        output_column = 0;
                     }
                 }
             }
@@ -73,7 +105,8 @@ public class Decoder {
 
             System.out.println("List of input files' names");
             for (int i = 0; i < sources.size(); i++) {
-                System.out.println(sources.get(i));
+                System.out.println(sources.get(i).getFilename());
+                sources.get(i).closeFile();
             }
 
             System.out.println("List of input files' sequences");
@@ -109,6 +142,56 @@ public class Decoder {
 
         return str.split(",");
     }
+
+    private static ArrayList<Integer> getDecodedIndexesFromBits(String seq) {
+        ArrayList<Integer> result = new ArrayList<>();
+
+        int i = 0;
+        while (i < seq.length()) {
+
+            if (seq.charAt(i) == '1') {
+                int sign = seq.charAt(i + 5) == '1' ? -1 : 1;
+                int base = 0;
+                int value = Integer.valueOf(seq.substring(i + 1, i + 5), 2);
+
+
+                i += 6;
+                base = 4;
+                while (seq.charAt(i) == '1') {
+                    value += Integer.valueOf(seq.substring(i + 1, i + 6) + multiplySeqByInt("0", base), 2);
+                    base += 5;
+                    i += 6;
+                }
+
+                value += Integer.valueOf(seq.substring(i + 1, i + 6) + multiplySeqByInt("0", base), 2);
+                result.add(sign * value);
+            }
+            else {
+                int sign = seq.charAt(i + 5) == '1' ? -1 : 1;
+                result.add(sign * Integer.valueOf(seq.substring(i + 1, i + 5), 2));
+            }
+
+            i += 6;
+        }
+
+        return result;
+    }
+
+    private static String multiplySeqByInt(String seq, int scalar) {
+        if (scalar > 0) {
+            StringBuilder result = new StringBuilder();
+            for (int i = 0; i < scalar; i++) {
+                result.append(seq);
+            }
+
+            return result.toString();
+        }
+        else {
+            return "";
+        }
+    }
+
+    private static int fiveIndexes = 5;
 }
 
 /**
@@ -119,17 +202,50 @@ class FileBuilder {
 
     public  FileBuilder(String filename) {
         try {
+            this.filename = filename;
             file = new PrintWriter(filename);
+            currentLine = 0;
+            buffer = "";
         }
         catch (FileNotFoundException exception) {
             System.out.println(exception.getMessage());
         }
     }
 
-    public void writeSequences(String s) {
-
+    public void flushFile() {
+        file.flush();
     }
 
+    public void closeFile() {
+        file.append(buffer);
+        file.close();;
+    }
+
+    public void writeSequences(String s, int line, int column) {
+        if (currentLine == line) {
+            StringBuilder tmp = new StringBuilder(buffer);
+            tmp.insert(column, s);
+            buffer = tmp.toString();
+        }
+        else {
+            file.append(buffer);
+            while (currentLine < line) {
+                file.append('\n');
+                currentLine += 1;
+            }
+            StringBuilder tmp = new StringBuilder();
+            tmp.insert(column, s);
+            buffer = tmp.toString();
+        }
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    private String filename;
     private PrintWriter file;
+    private int currentLine;
+    private String buffer;
 
 }

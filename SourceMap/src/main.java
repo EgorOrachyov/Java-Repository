@@ -4,7 +4,6 @@ import SourceMap.Decoder;
 public class main {
     public static void main(String[] args) {
 
-        Decoder.decode("test1.txt");
-
+        Decoder.decode("test2.txt");
     }
 }
