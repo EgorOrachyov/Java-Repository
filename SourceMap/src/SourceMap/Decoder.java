@@ -51,8 +51,9 @@ public class Decoder {
 
                 if (tmp.contains("names")) {
                     String line = getCommonInfo(file);
-                    String[] sequences = getClearSplittedString(line);
+                    String[] sequences = getClearStringIgnoreQuotes(line).split(",");
                     for(String s: sequences) {
+                        s = s.substring(1, s.length() - 1);
                         names.add(s);
                     }
 
@@ -60,8 +61,7 @@ public class Decoder {
                 }
 
                 if (tmp.contains("mappings")) {
-                    String line = getCommonInfo(file);
-                    String[] lines = line.split(";");
+                    String[] lines = getClearString(getCommonInfo(file)).split(";");
                     //String[] encoded = getClearSplittedString(line);
 
                     int output_line = 0;
@@ -72,23 +72,30 @@ public class Decoder {
                     int input_name = 0;
 
                     for (String current: lines) {
+
+                        System.out.println(current);
+
                         String[] maps = getClearSplittedString(current);
 
                         for (String map: maps) {
+
+                            System.out.println(map);
+                            System.out.println(Base64Table.getDecodedBits(map));
+
                             ArrayList<Integer> indexes = getDecodedIndexesFromBits(Base64Table.getDecodedBits(map));
+
+                            for (Integer num: indexes) {
+                                System.out.println(num);
+                            }
 
                             // 0: output_column 1: input_file 2: input_line 3: input_column 4: input_name
 
                             if (indexes.size() == fiveIndexes) {
 
-                                for (Integer num: indexes) {
-                                    System.out.println(num);
-                                }
-
                                 output_column += indexes.get(0);
                                 input_file += indexes.get(1);
                                 input_line += indexes.get(2);
-                                input_column = (indexes.get(2) == 0 ? input_column + indexes.get(3) : 0);
+                                input_column = (indexes.get(2) == 0 ? input_column + indexes.get(3) : indexes.get(3));
                                 input_name += indexes.get(4);
 
                                 sources.get(input_file).writeSequences(names.get(input_name), input_line, input_column);
@@ -134,13 +141,25 @@ public class Decoder {
         return line.toString();
     }
 
-    private static String[] getClearSplittedString(String str) {
+    private static String getClearStringIgnoreQuotes(String str) {
+        str = str.replace(":", "");
+        str = str.replace("[", "");
+        str = str.replace("]", "");
+
+        return str;
+    }
+
+    private static String getClearString(String str) {
         str = str.replace(":", "");
         str = str.replace("[", "");
         str = str.replace("]", "");
         str = str.replace("\"", "");
 
-        return str.split(",");
+        return str;
+    }
+
+    private static String[] getClearSplittedString(String str) {
+        return getClearString(str).split(",");
     }
 
     private static ArrayList<Integer> getDecodedIndexesFromBits(String seq) {
@@ -205,7 +224,7 @@ class FileBuilder {
             this.filename = filename;
             file = new PrintWriter(filename);
             currentLine = 0;
-            buffer = "";
+            buffer = "                                                                 ";
         }
         catch (FileNotFoundException exception) {
             System.out.println(exception.getMessage());
@@ -222,9 +241,11 @@ class FileBuilder {
     }
 
     public void writeSequences(String s, int line, int column) {
+        System.out.println(s + " " + line + " " + column);
         if (currentLine == line) {
             StringBuilder tmp = new StringBuilder(buffer);
-            tmp.insert(column, s);
+            //tmp.insert(column, s);
+            tmp.replace(column, column + s.length(), s);
             buffer = tmp.toString();
         }
         else {
@@ -233,8 +254,10 @@ class FileBuilder {
                 file.append('\n');
                 currentLine += 1;
             }
-            StringBuilder tmp = new StringBuilder();
-            tmp.insert(column, s);
+            buffer = "                                                                 ";
+            StringBuilder tmp = new StringBuilder(buffer);
+            //tmp.insert(column, s);
+            tmp.replace(column, column + s.length(), s);
             buffer = tmp.toString();
         }
     }
