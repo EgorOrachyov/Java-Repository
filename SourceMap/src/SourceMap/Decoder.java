@@ -51,10 +51,41 @@ public class Decoder {
 
                 if (tmp.contains("names")) {
                     String line = getCommonInfo(file);
-                    String[] sequences = getClearStringIgnoreQuotes(line).split(",");
-                    for(String s: sequences) {
-                        s = s.substring(1, s.length() - 1);
-                        names.add(s);
+                    //String[] sequences = getClearStringIgnoreQuotes(line).split(",");
+                    //for(String s: sequences) {
+                    //    s = s.substring(1, s.length() - 1);
+                    //    names.add(s);
+                    //}
+
+                    line = getClearStringIgnoreQuotes(line);
+                    int i = 0;
+                    boolean isItWord = false;
+                    StringBuilder current = new StringBuilder("");
+
+                    while (i < line.length()) {
+                        if (line.charAt(i) == '\"') {
+                            if (!isItWord) {
+                                isItWord = true;
+                            }
+                            else {
+                                names.add(current.toString());
+                                current = new StringBuilder("");
+                                isItWord = false;
+                            }
+                        }
+                        else {
+                            if (isItWord) {
+                                if (line.substring(i, i + 2).equals("\\\"")) {
+                                    current.append('\"');
+                                    i += 1;
+                                }
+                                else {
+                                    current.append(line.charAt(i));
+                                }
+                            }
+                        }
+
+                        i += 1;
                     }
 
                     continue;
