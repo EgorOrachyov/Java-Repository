@@ -66,5 +66,4 @@ public class Base64 {
 
         return result.toString();
     }
-
 }
