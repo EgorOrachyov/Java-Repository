@@ -8,11 +8,11 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 /**
- *  Decoder represents functions for parsing
- *  source map files and creating base code
- *  file
- *
- *  (uses Base64 class to work with encoded strings)
+ * Decoder represents functions for parsing
+ * source map files and creating base code
+ * file
+ * <p>
+ * (uses Base64 class to work with encoded strings)
  */
 public class Decoder {
 
@@ -20,7 +20,6 @@ public class Decoder {
 
         ArrayList<FileBuilder> sources = new ArrayList<>();
         ArrayList<String> names = new ArrayList<>();
-        String mappings;
         String tmp;
         Base64 Base64Table = new Base64();
 
@@ -28,7 +27,7 @@ public class Decoder {
 
             Scanner file = new Scanner(Paths.get(sourceMapFile));
 
-            while(file.hasNext()) {
+            while (file.hasNext()) {
                 tmp = file.next();
 
                 /*
@@ -40,9 +39,9 @@ public class Decoder {
                  */
 
                 if (tmp.contains("sources")) {
-                    String line = getCommonInfo(file);
-                    String[] sourceNames = getClearSplittedString(line);
-                    for(String s: sourceNames) {
+                    String line = StringTools.getCommonInfo(file);
+                    String[] sourceNames = StringTools.getClearSplittedString(line);
+                    for (String s : sourceNames) {
                         sources.add(new FileBuilder(s));
                     }
 
@@ -50,14 +49,10 @@ public class Decoder {
                 }
 
                 if (tmp.contains("names")) {
-                    String line = getCommonInfo(file);
-                    //String[] sequences = getClearStringIgnoreQuotes(line).split(",");
-                    //for(String s: sequences) {
-                    //    s = s.substring(1, s.length() - 1);
-                    //    names.add(s);
-                    //}
 
-                    line = getClearStringIgnoreQuotes(line);
+                    String line = StringTools.getCommonInfo(file);
+
+                    line = StringTools.getClearStringIgnoreQuotes(line);
                     int i = 0;
                     boolean isItWord = false;
                     StringBuilder current = new StringBuilder("");
@@ -66,20 +61,17 @@ public class Decoder {
                         if (line.charAt(i) == '\"') {
                             if (!isItWord) {
                                 isItWord = true;
-                            }
-                            else {
+                            } else {
                                 names.add(current.toString());
                                 current = new StringBuilder("");
                                 isItWord = false;
                             }
-                        }
-                        else {
+                        } else {
                             if (isItWord) {
                                 if (line.substring(i, i + 2).equals("\\\"")) {
                                     current.append('\"');
                                     i += 1;
-                                }
-                                else {
+                                } else {
                                     current.append(line.charAt(i));
                                 }
                             }
@@ -92,8 +84,7 @@ public class Decoder {
                 }
 
                 if (tmp.contains("mappings")) {
-                    String[] lines = getClearString(getCommonInfo(file)).split(";");
-                    //String[] encoded = getClearSplittedString(line);
+                    String[] lines = StringTools.getClearString(StringTools.getCommonInfo(file)).split(";");
 
                     int output_line = 0;
                     int output_column = 0;
@@ -102,22 +93,13 @@ public class Decoder {
                     int input_column = 0;
                     int input_name = 0;
 
-                    for (String current: lines) {
+                    for (String current : lines) {
 
-                        System.out.println(current);
+                        String[] maps = StringTools.getClearSplittedString(current);
 
-                        String[] maps = getClearSplittedString(current);
-
-                        for (String map: maps) {
-
-                            System.out.println(map);
-                            System.out.println(Base64Table.getDecodedBits(map));
+                        for (String map : maps) {
 
                             ArrayList<Integer> indexes = getDecodedIndexesFromBits(Base64Table.getDecodedBits(map));
-
-                            for (Integer num: indexes) {
-                                System.out.println(num);
-                            }
 
                             // 0: output_column 1: input_file 2: input_line 3: input_column 4: input_name
 
@@ -139,18 +121,13 @@ public class Decoder {
                 }
             }
 
-            // Debug output
-
-            System.out.println("List of input files' names");
-            for (int i = 0; i < sources.size(); i++) {
-                System.out.println(sources.get(i).getFilename());
-                sources.get(i).closeFile();
+            // Out names of NEW created files
+            System.out.print("Created files: ");
+            for(FileBuilder source: sources) {
+                source.closeFile();
+                System.out.print(source.getFilename() + " ");
             }
-
-            System.out.println("List of input files' sequences");
-            for (int i = 0; i < names.size(); i++) {
-                System.out.println(names.get(i));
-            }
+            System.out.println();
 
             return true;
 
@@ -161,40 +138,8 @@ public class Decoder {
         return false;
     }
 
-    private static String getCommonInfo(Scanner file) {
-        StringBuilder line = new StringBuilder();
-        line.append("");
-
-        while(!line.toString().contains(",") || (line.toString().contains("[") && !line.toString().contains("],"))) {
-            line.append(file.next());
-        }
-
-        return line.toString();
-    }
-
-    private static String getClearStringIgnoreQuotes(String str) {
-        str = str.replace(":", "");
-        str = str.replace("[", "");
-        str = str.replace("]", "");
-
-        return str;
-    }
-
-    private static String getClearString(String str) {
-        str = str.replace(":", "");
-        str = str.replace("[", "");
-        str = str.replace("]", "");
-        str = str.replace("\"", "");
-
-        return str;
-    }
-
-    private static String[] getClearSplittedString(String str) {
-        return getClearString(str).split(",");
-    }
-
     private static ArrayList<Integer> getDecodedIndexesFromBits(String seq) {
-        ArrayList<Integer> result = new ArrayList<>();
+        ArrayList<Integer> result = new ArrayList<>(capasityForArrays);
 
         int i = 0;
         while (i < seq.length()) {
@@ -208,15 +153,14 @@ public class Decoder {
                 i += 6;
                 base = 4;
                 while (seq.charAt(i) == '1') {
-                    value += Integer.valueOf(seq.substring(i + 1, i + 6) + multiplySeqByInt("0", base), 2);
+                    value += Integer.valueOf(seq.substring(i + 1, i + 6) + StringTools.multiplySeqByInt("0", base), 2);
                     base += 5;
                     i += 6;
                 }
 
-                value += Integer.valueOf(seq.substring(i + 1, i + 6) + multiplySeqByInt("0", base), 2);
+                value += Integer.valueOf(seq.substring(i + 1, i + 6) + StringTools.multiplySeqByInt("0", base), 2);
                 result.add(sign * value);
-            }
-            else {
+            } else {
                 int sign = seq.charAt(i + 5) == '1' ? -1 : 1;
                 result.add(sign * Integer.valueOf(seq.substring(i + 1, i + 5), 2));
             }
@@ -227,37 +171,23 @@ public class Decoder {
         return result;
     }
 
-    private static String multiplySeqByInt(String seq, int scalar) {
-        if (scalar > 0) {
-            StringBuilder result = new StringBuilder();
-            for (int i = 0; i < scalar; i++) {
-                result.append(seq);
-            }
-
-            return result.toString();
-        }
-        else {
-            return "";
-        }
-    }
-
     private static int fiveIndexes = 5;
+    private static int capasityForArrays = 6;
 }
 
 /**
- *  FileBuilder helps to create source file
- *  by simple operations
+ * FileBuilder helps to create source file
+ * by simple operations
  */
 class FileBuilder {
 
-    public  FileBuilder(String filename) {
+    public FileBuilder(String filename) {
         try {
             this.filename = filename;
             file = new PrintWriter(filename);
             currentLine = 0;
-            buffer = "                                                                 ";
-        }
-        catch (FileNotFoundException exception) {
+            buffer = StringTools.multiplySeqByInt(" ", BUFFER_SIZE);
+        } catch (FileNotFoundException exception) {
             System.out.println(exception.getMessage());
         }
     }
@@ -268,26 +198,24 @@ class FileBuilder {
 
     public void closeFile() {
         file.append(buffer);
-        file.close();;
+        file.close();
+        ;
     }
 
     public void writeSequences(String s, int line, int column) {
-        System.out.println(s + " " + line + " " + column);
+
         if (currentLine == line) {
             StringBuilder tmp = new StringBuilder(buffer);
-            //tmp.insert(column, s);
             tmp.replace(column, column + s.length(), s);
             buffer = tmp.toString();
-        }
-        else {
+        } else {
             file.append(buffer);
             while (currentLine < line) {
                 file.append('\n');
                 currentLine += 1;
             }
-            buffer = "                                                                 ";
+            buffer = StringTools.multiplySeqByInt(" ", BUFFER_SIZE);
             StringBuilder tmp = new StringBuilder(buffer);
-            //tmp.insert(column, s);
             tmp.replace(column, column + s.length(), s);
             buffer = tmp.toString();
         }
@@ -301,5 +229,6 @@ class FileBuilder {
     private PrintWriter file;
     private int currentLine;
     private String buffer;
-
+    private final static int BUFFER_SIZE = 300;
 }
+
