@@ -7,7 +7,7 @@ public class StringTools {
         StringBuilder line = new StringBuilder();
         line.append("");
 
-        while (!line.toString().contains(",") || (line.toString().contains("[") && !line.toString().contains("],"))) {
+        while (file.hasNext() && (!line.toString().contains(",") || (line.toString().contains("[") && !line.toString().contains("],")))) {
             line.append(file.next());
         }
 
