@@ -11,7 +11,7 @@ import java.util.Scanner;
  * Decoder represents functions for parsing
  * source map files and creating base code
  * file
- * <p>
+ *
  * (uses Base64 class to work with encoded strings)
  */
 public class Decoder {

@@ -3,9 +3,9 @@ package SourceMap;
 import java.util.HashMap;
 
 /**
- *  Base64 class introduces mentioned code table
- *  with methods to encode and decode
- *  sequences of chars
+ * Base64 class introduces mentioned code table
+ * with methods to encode and decode
+ * sequences of chars
  */
 public class Base64 {
 
@@ -29,8 +29,8 @@ public class Base64 {
 
         // Build numbers from 0 to 9
         for (int i = 0; i < 10; i++) {
-            CharToInt.put((char)(i), i + 2 * alphabetSize);
-            IntToChar.put(i + 2 *  alphabetSize, (char)(i));
+            CharToInt.put((char) (i), i + 2 * alphabetSize);
+            IntToChar.put(i + 2 * alphabetSize, (char) (i));
         }
 
         // Build arithmetic symbols
