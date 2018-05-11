@@ -20,5 +20,4 @@ public class Point2 {
 
     private int x;
     private int y;
-
 }

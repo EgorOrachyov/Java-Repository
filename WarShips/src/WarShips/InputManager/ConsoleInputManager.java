@@ -138,13 +138,12 @@ public class ConsoleInputManager implements BasicInputManager {
             }
 
             return a;
-
         }
         catch (NumberFormatException e) {
             return null;
         }
     }
 
-    Scanner in;
+    private Scanner in;
 
 }

@@ -1,11 +1,10 @@
-package WarShips.AI;
+package WarShips.Behavior;
 
 import WarShips.Field;
 import WarShips.Message;
 import WarShips.Point2;
 
 import static WarShips.Common.*;
-import static WarShips.AI.ShipPositionGenerator.*;
 
 /**
  *  Implements Heavy decision maker
@@ -30,7 +29,7 @@ public class AIHeavyDecisionMaker implements DecisionMaker {
         switch (message.getActionType()) {
 
             case ACTION_SET_SHIP:
-                setShipsRandom(message.getReceiverField());
+                ShipPositionGenerator.setShipsRandom(message.getReceiverField());
                 break;
 
             case ACTION_FIRE:
@@ -119,8 +118,6 @@ public class AIHeavyDecisionMaker implements DecisionMaker {
                         shouldTotallyDestroy = true;
                     }
                 }
-
-                break;
         }
     }
 

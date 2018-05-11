@@ -1,6 +1,6 @@
 package WarShips;
 
-import WarShips.AI.DecisionMaker;
+import WarShips.Behavior.DecisionMaker;
 
 /**
  *  Stores player's info, provides functions to work

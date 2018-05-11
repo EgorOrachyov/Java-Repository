@@ -1,10 +1,9 @@
-package WarShips.AI;
+package WarShips.Behavior;
 
 import WarShips.Message;
 import WarShips.Point2;
 
 import static WarShips.Common.*;
-import static WarShips.AI.ShipPositionGenerator.*;
 
 /**
  *  Implements Random decision maker
@@ -17,7 +16,7 @@ public class AIRandomDecisionMaker implements DecisionMaker {
         switch (message.getActionType()) {
 
             case ACTION_SET_SHIP:
-                setShipsRandom(message.getReceiverField());
+                ShipPositionGenerator.setShipsRandom(message.getReceiverField());
                 break;
 
             case ACTION_FIRE:

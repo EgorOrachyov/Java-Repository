@@ -45,8 +45,7 @@ public class Message {
         return params[3];
     }
 
-    public void push(Field opponentField, Field receiverField, int actionType, int[] params)
-    {
+    public void push(Field opponentField, Field receiverField, int actionType, int[] params) {
         this.opponentField = opponentField;
         this.receiverField = receiverField;
         this.actionType = actionType;

@@ -23,7 +23,6 @@ public class Field {
     }
 
     public boolean setShip(Point2 p, int type, int orientation) {
-
         Point2 q;
 
         if (orientation == ORIENTATION_VERTICAL) {
@@ -134,10 +133,10 @@ public class Field {
         return true;
     }
 
-    private void fillPlace(int left, int right, int up, int down, int slot_type) {
+    private void fillPlace(int left, int right, int up, int down, int slotType) {
         for(int i = left; i <= right; i++) {
             for (int j = up; j <= down; j++) {
-                field[i][j] = slot_type;
+                field[i][j] = slotType;
             }
         }
     }

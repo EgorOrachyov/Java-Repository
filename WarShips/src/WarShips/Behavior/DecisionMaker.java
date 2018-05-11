@@ -1,4 +1,4 @@
-package WarShips.AI;
+package WarShips.Behavior;
 
 import WarShips.Message;
 
