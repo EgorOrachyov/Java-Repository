@@ -6,6 +6,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
 
+/**
+ * Loads compiled java class to the project from file with
+ * full names of that (all packages) and allows to create
+ * instances of that
+ *
+ * @param <T> Desired object (class or interface) to be loaded
+ */
 public class PluginsLoader<T> {
 
     public PluginsLoader() {}
