@@ -10,7 +10,7 @@ import static WarShips.Common.*;
  *  Does not have its game logic, only handles messages
  *  and pass info to game field
  */
-public class AIHumanDecisionMaker implements DecisionMaker {
+public class HumanDecisionMaker implements DecisionMaker {
 
     public void pullEvent(Message message) {
 

@@ -1,9 +1,9 @@
 package WarShips.GameManager;
 
 import WarShips.*;
-import WarShips.Behavior.AIHeavyDecisionMaker;
-import WarShips.Behavior.AIHumanDecisionMaker;
+import WarShips.Behavior.HumanDecisionMaker;
 import WarShips.Behavior.AIRandomDecisionMaker;
+import WarShips.Behavior.AIHeavyDecisionMaker;
 import WarShips.InputManager.BasicInputManager;
 import WarShips.InputManager.ConsoleInputManager;
 import java.util.ArrayList;
@@ -16,12 +16,13 @@ import static WarShips.Common.*;
  *  main loop of game
  */
 public class WarShipsGameManager implements BasicGameManager {
+
 	public WarShipsGameManager() {
 		playersCount = 3;
 		isDone = false;
 
 		players = new ArrayList<>(playersCount);
-		players.add(new Player(new AIHumanDecisionMaker()));
+		players.add(new Player(new HumanDecisionMaker()));
 		players.add(new Player(new AIHeavyDecisionMaker()));
 		players.add(new Player(new AIRandomDecisionMaker()));
 
@@ -139,7 +140,7 @@ public class WarShipsGameManager implements BasicGameManager {
 
 	private void CreatePlayer() {
 		inputManager.outString("Enter name\n");
-		human = new Player(inputManager.getString(), new AIHumanDecisionMaker());
+		human = new Player(inputManager.getString(), new HumanDecisionMaker());
 		players.add(human);
 		playersCount += 1;
 	}
