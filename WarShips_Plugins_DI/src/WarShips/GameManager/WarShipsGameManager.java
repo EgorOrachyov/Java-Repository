@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import Plugins.PluginsLoader;
 
 import static WarShips.Common.*;
+import static WarShips.Behavior.ShipPositionGenerator.*;
+
 
 /**
  *  WarShipsGameManager implements common war ships' game logic,
@@ -181,10 +183,20 @@ public class WarShipsGameManager implements BasicGameManager {
 		Field enemyField = new Field();
 		Message event = new Message();
 
-		setShip(HEAVY_SHIP_COUNT, HEAVY_SHIP, "\nSet Heavy ship\n", humanField);
-		setShip(STANDARD_SHIP_COUNT, STANDARD_SHIP, "\nSet Standard ship\n", humanField);
-		setShip(MIDDLE_SHIP_COUNT, MIDDLE_SHIP, "\nSet Middle ship\n", humanField);
-		setShipIgnoreOrientation(SMALL_SHIP_COUNT, SMALL_SHIP, "\nSet Small ship\n", humanField);
+		inputManager.outString("Enter 1 to build map yourself of 0 to generate map in random\n");
+		if (inputManager.getParam() == 1) {
+			setShip(HEAVY_SHIP_COUNT, HEAVY_SHIP, "\nSet Heavy ship\n", humanField);
+			setShip(STANDARD_SHIP_COUNT, STANDARD_SHIP, "\nSet Standard ship\n", humanField);
+			setShip(MIDDLE_SHIP_COUNT, MIDDLE_SHIP, "\nSet Middle ship\n", humanField);
+			setShipIgnoreOrientation(SMALL_SHIP_COUNT, SMALL_SHIP, "\nSet Small ship\n", humanField);
+		}
+		else {
+			setShipsRandom(humanField);
+		}
+
+		inputManager.outString("Your map\n\n");
+		inputManager.outFieldHitsInfo(humanField);
+		inputManager.outString("\n");
 
 		event.push(humanField, enemyField, ACTION_SET_SHIP, null);
 		enemy.handleMessage(event);
