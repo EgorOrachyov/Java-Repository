@@ -7,6 +7,7 @@ import WarShips.InputManager.BasicInputManager;
 import WarShips.InputManager.ConsoleInputManager;
 import java.util.ArrayList;
 import Plugins.PluginsLoader;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static WarShips.Common.*;
 import static WarShips.Behavior.ShipPositionGenerator.*;
@@ -37,6 +38,12 @@ public class WarShipsGameManager implements BasicGameManager {
 
 		playersCount = players.size();
 		inputManager = new ConsoleInputManager();
+	}
+
+	@Autowired
+	public WarShipsGameManager(BasicInputManager basicInputManager) {
+		this();
+		this.inputManager = basicInputManager;
 	}
 
 	public void Run() {

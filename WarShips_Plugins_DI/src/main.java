@@ -1,10 +1,12 @@
 import WarShips.GameManager.BasicGameManager;
-import WarShips.GameManager.WarShipsGameManager;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class main {
     public static void main(String... args) {
 
-        BasicGameManager game = new WarShipsGameManager();
+        ApplicationContext context = new ClassPathXmlApplicationContext("spring-config.xml");
+        BasicGameManager game = context.getBean("warShipsGameManager", BasicGameManager.class);
         game.Run();
 
     }
