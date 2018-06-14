@@ -1,0 +1,7 @@
+{
+    "version": 3,
+    "file": "HelloWorld.txt",
+    "sources": ["HelloWorld.c"],
+    "names": ["#include","<stdio.h>","int","main()","{","printf(\"Hello,World\");","}",],
+    "mappings": "AAAAA,AAASC;AAEAC,AAAIC,AAAOC;AACIC;AACAC;"
+}
