@@ -1,2 +1,5 @@
-# Java-Repository
-For saving java-tasks from an studying course
+# SPBU-HOMEWORK-II
+
+Saint Petersburg State University, Mathematics and Mechanics, Software Engineering
+
+Programming Workshop (Java language)
